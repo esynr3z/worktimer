@@ -5,8 +5,13 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     guile-3.0 guile-3.0-dev \
     ca-certificates curl git nano openssh-client make bash-completion pipx \
+    locales \
+    && locale-gen en_US.UTF-8 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+ENV LANG=en_US.UTF-8
+ENV LC_ALL=en_US.UTF-8
 
 # Ensure the devcontainer user exists
 RUN if ! id -u ubuntu >/dev/null 2>&1; then useradd -m -s /bin/bash ubuntu; fi
