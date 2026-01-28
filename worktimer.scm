@@ -37,8 +37,13 @@
 ;;; Record format:
 ;;; PROJECT/TASK/SUBTASK/ETC: [START_TIME] - [STOP_TIME] - DURATION
 
-;;; Hardcoded timesheet filename
-(define ts-file (string-append (getenv "HOME") "/.timesheet"))
+;;; Timesheet filename (WORKTIMER_HOME or HOME)
+(define ts-home
+  (let ((worktimer-home (getenv "WORKTIMER_HOME")))
+    (if (and worktimer-home (not (string-null? worktimer-home)))
+        worktimer-home
+        (getenv "HOME"))))
+(define ts-file (string-append ts-home "/.timesheet"))
 (define date-time-format "~Y-~m-~d ~H:~M:~S")
 (define date-format "~Y-~m-~d")
 
