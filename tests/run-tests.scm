@@ -1,0 +1,93 @@
+#!/usr/bin/env guile
+!#
+
+(setenv "GUILE_AUTO_COMPILE" "0")
+
+(define repo-root (getcwd))
+(set! %load-path (cons repo-root %load-path))
+
+(use-modules (ice-9 ftw)
+             (ice-9 regex)
+             (tests helpers))
+
+(define (string-prefix? prefix str)
+  (let ((plen (string-length prefix))
+        (slen (string-length str)))
+    (and (<= plen slen)
+         (string=? prefix (substring str 0 plen)))))
+
+(define (string-suffix? suffix str)
+  (let ((slen (string-length str))
+        (tlen (string-length suffix)))
+    (and (<= tlen slen)
+         (string=? suffix (substring str (- slen tlen) slen)))))
+
+(define (relativize path root)
+  (let ((prefix (string-append root "/")))
+    (if (string-prefix? prefix path)
+        (substring path (string-length prefix))
+        path)))
+
+(define (glob->regexp pattern)
+  (let ((len (string-length pattern)))
+    (let loop ((i 0) (out "^"))
+      (if (= i len)
+          (string-append out "$")
+          (let ((ch (string-ref pattern i)))
+            (cond
+             ((char=? ch #\*)
+              (if (and (< (+ i 1) len) (char=? (string-ref pattern (+ i 1)) #\*))
+                  (loop (+ i 2) (string-append out ".*"))
+                  (loop (+ i 1) (string-append out "[^/]*"))))
+             ((char=? ch #\?)
+              (loop (+ i 1) (string-append out "[^/]") ))
+             ((memv ch '(#\. #\+ #\( #\) #\| #\^ #\$ #\[ #\] #\{ #\} #\\))
+              (loop (+ i 1) (string-append out "\\" (string ch))))
+             (else (loop (+ i 1) (string-append out (string ch))))))))))
+
+(define (compile-patterns patterns)
+  (map (lambda (p) (make-regexp (glob->regexp p))) patterns))
+
+(define (match-any? path regexps)
+  (let loop ((rx regexps))
+    (cond
+     ((null? rx) #f)
+     ((regexp-exec (car rx) path) #t)
+     (else (loop (cdr rx))))))
+
+(define (list-files dir)
+  (if (not (file-exists? dir))
+      '()
+      (let ((entries (scandir dir (lambda (n) (not (member n '("." "..")))))))
+        (apply append
+               (map (lambda (name)
+                      (let ((path (string-append dir "/" name)))
+                        (if (file-is-directory? path)
+                            (list-files path)
+                            (list path))))
+                    entries)))))
+
+(define (collect-test-files patterns)
+  (let* ((regexps (compile-patterns patterns))
+         (files (list-files tests-root)))
+    (let loop ((files files) (out '()))
+      (if (null? files)
+          (reverse out)
+          (let* ((abs (car files))
+                 (rel (relativize abs repo-root)))
+            (loop (cdr files)
+                  (if (and (string-suffix? "-test.scm" rel)
+                           (match-any? rel regexps))
+                      (cons abs out)
+                      out)))))))
+
+(let* ((patterns (let ((args (cdr (command-line))))
+                   (if (null? args)
+                       '("tests/**/*-test.scm")
+                       args)))
+       (files (collect-test-files patterns)))
+  (when (null? files)
+    (format #t "No test files matched: ~a\n" patterns)
+    (exit 1))
+  (for-each load files)
+  (print-test-summary))

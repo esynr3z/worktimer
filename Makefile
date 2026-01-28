@@ -6,7 +6,7 @@ bootstrap:
 
 ## Run tests
 test:
-	@echo "Nothing to do yet"
+	GUILE_AUTO_COMPILE=0 guile -s tests/run-tests.scm $(TEST)
 
 ## Run pre-commit hooks on all files
 pre-commit:
