@@ -5,7 +5,7 @@ _timer()
     case "$COMP_CWORD" in
         1)
             # Commands
-            COMPREPLY=( $(compgen -W "start stop report stats deadline archive unarch refresh timesheet help" -- $uncomplete) )
+            COMPREPLY=( $(compgen -W "start stop report stats archive unarch refresh timesheet help" -- $uncomplete) )
             ;;
         2)
             # Command argument 1
@@ -17,10 +17,6 @@ _timer()
                 report|timesheet)
                     local tasklist=$(timer tasklist)
                     COMPREPLY=( $(compgen -W "day week month $tasklist" -- $uncomplete))
-                    ;;
-                deadline)
-                    local deadlist=$(timer deadlist)
-                    COMPREPLY=( $(compgen -W "set clear all $deadlist" -- $uncomplete))
                     ;;
                 unarch)
                     local archlist=$(timer archlist)
@@ -47,28 +43,7 @@ _timer()
                         ;;
                     esac
                     ;;
-                deadline)
-                    case "${COMP_WORDS[2]}" in
-                        set)
-                            local tasklist=$(timer tasklist)
-                            local d=$(date +"%Y-%m-%d")
-                            COMPREPLY=( $(compgen -W "$tasklist $d" -- $uncomplete))
-                        ;;
-                        clear)
-                            local deadlist=$(timer deadlist)
-                            COMPREPLY=( $(compgen -W "$deadlist" -- $uncomplete))
-                        ;;
-                    esac
-                    ;;
             esac
-            ;;
-        4)
-            # Command argument 3
-            if [ "${COMP_WORDS[1]}" = "deadline" ]
-            then
-                local d=$(date +"%Y-%m-%d")
-                COMPREPLY=( $(compgen -W "$d" -- $uncomplete))
-            fi
             ;;
     esac
 }

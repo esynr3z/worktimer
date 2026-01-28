@@ -11,14 +11,10 @@
         report week [DATE]              Show report for current week or week of DATE
         report month [DATE]             Show report for current month or month of DATE
         report TASK                     Show report for project
-        deadline set [TASK] DATE|TIME   Add deadline for project (or for last task)
-        deadline clear [TASK]           Remove deadline for project (or for last task)
-        deadline [TASK]                 Show deadline for project
-        deadline all                    Show all deadlines
-        timesheet                       Show all raw events
-        timesheet day [DATE]            Show raw events for today or DATE
-        timesheet week [DATE]           Show raw events for current week or week of DATE
-        timesheet month [DATE]          Show raw events for current month or month of DATE
+    timesheet                       Show all raw events
+    timesheet day [DATE]            Show raw events for today or DATE
+    timesheet week [DATE]           Show raw events for current week or week of DATE
+    timesheet month [DATE]          Show raw events for current month or month of DATE
         timesheet TASK                  Show raw events
         archive                         Show archive tasks
         archive TASK                    Add task to archive
@@ -98,28 +94,6 @@
 директорию, задайте переменную окружения `WORKTIMER_HOME` (например,
 `WORKTIMER_HOME=/tmp`). В этом случае файл будет создан как
 `$WORKTIMER_HOME/.timesheet`.
-
-Команда `deadline` предназначена для добавления и удаления дедлайнов. Дедлайны
-могут быть датой, до которой нужно закончить проект, или временем, которое можно
-потратить на выполнение задачи.
-
-Установить дедлайт для проекта можно командой `deadline set`. В качестве
-аргумента может выступать имя задачи и дата/время или просто дата/время (в этом
-случае дедлайн установится для последней запущеной задачи).
-
-Удаляется дедлайн командой `deadline clear` с именем проекта в качестве
-параметра.
-
-Посмотреть установленные дедлайны можно командой `deadline all`. Команда `deadline`
-без параметров выведет дедлайн для текущей задачи.
-
-Дедлайны отображаются в отчете. Для дедлайна по времени признак истечения
-времени зависит от периода, за который сформирован отчет. Например, если дедлайн
-по проекту 1 час, а всего на проект потрачено 2 часа, из которых сегодня только
-20 минут, то при формировании отчета за весь период (или по проекту) признак
-превышения времени будет установлен. А при отчете за сегодня, до дедлайна
-останется еще 40 минут. Это может быть удобно при планировании времени на
-день/неделю/месяц.
 
 Для того, чтобы посмотреть историю работы, можно воспользоваться командой
 `timesheet`. Эта команда показывает выполнявшиеся задачи в таком виде, в котором

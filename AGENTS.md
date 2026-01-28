@@ -44,20 +44,18 @@ Primary entrypoint: `worktimer.scm` (installed or symlinked as `timer`).
 ### Naming
 - Use kebab-case for functions and variables: `path-split`, `cmd-start-task`
 - Predicates end with `?`: `date?`, `same-day?`, `path-prefix?`
-- Mutating helpers end with `!`: `tree-add-duration!`, `add-deadlines-to-report!`
-- Command handlers start with `cmd-` and accept `(sheet deadlines archives . args)`
+- Mutating helpers end with `!`: `tree-add-duration!`
+- Command handlers start with `cmd-` and accept `(sheet archives . args)`
 - Constants or globals are still lowercase: `ts-file`, `date-format`
 
 ### Data Shapes
 - Timesheet record: `(list path start-date end-date duration)`
 - Path is a list of string components, e.g. `(list "proj" "task")`
-- Deadlines: `(list path date-or-time)`
-- Report tree nodes: `(list name duration deadline . children)`
+- Report tree nodes: `(list name duration . children)`
 
 ### Timesheet File Format
 - File contains sections delimited by headers like `--- TIMESHEET`
 - Timesheet lines: `proj/task: [YYYY-mm-dd HH:MM:SS] - [YYYY-mm-dd HH:MM:SS] - HH:MM:SS`
-- Deadline lines: `proj/task: YYYY-mm-dd` or `proj/task: HH:MM:SS`
 - Archive lines: `proj/task/subtask`
 
 ### Imports and Modules
@@ -87,11 +85,11 @@ Primary entrypoint: `worktimer.scm` (installed or symlinked as `timer`).
 - When filtering by date, keep the SRFI-19 date math helpers
 
 ### CLI Command Conventions
-- Use `cmd-` functions that return `(values sheet deadlines archives)`
+- Use `cmd-` functions that return `(values sheet archives)`
 - Keep help text in the `else` branch in `main`
 - Stick to the existing command vocabulary: `start`, `stop`, `report`, etc.
 - Report and timesheet commands must honor archive filtering
-- Keep `tasklist`, `deadlist`, `archlist` outputs space-separated for completions
+- Keep `tasklist`, `archlist` outputs space-separated for completions
 
 ## Tips for Changes
 - Favor minimal, localized edits to `worktimer.scm`
