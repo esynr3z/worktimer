@@ -1,0 +1,19 @@
+fail_fast: true
+repos:
+  - repo: local
+    hooks:
+      - id: git-commit-style
+        name: Commit style check
+        description: Run commitizen to validate commit message
+        stages: [commit-msg]
+        entry: make check-commit
+        pass_filenames: false
+        language: system
+
+      - id: scheme-test
+        name: Scheme testing
+        description: Run launcher to execute tests
+        entry: make test
+        language: system
+        pass_filenames: false
+        stages: [pre-commit]
